@@ -2,6 +2,7 @@ package com.apeng.smartlogisticsbackend.service;
 
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional
     public Warehouse update(Warehouse warehouse) {
+        if (warehouse.getId() == null) return null;
         return repository.save(warehouse);
     }
 
