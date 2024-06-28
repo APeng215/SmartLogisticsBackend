@@ -21,7 +21,8 @@ public class Car {
     @GeneratedValue
     private Long id;
 
-
+    private String transporter;
+    private String state;
 
     @OneToMany
     private List<Order> orders = new ArrayList<>();

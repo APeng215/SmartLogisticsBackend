@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,10 @@ public class Order {
     @Id
     @GeneratedValue
     private Long id;
+
+    private Date createTime;
+    private Date updateTime;
+    private String state;
 
     @OneToMany
     private List<Product> products = new ArrayList<>();

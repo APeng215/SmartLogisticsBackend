@@ -21,6 +21,10 @@ public class Shelve {
     @GeneratedValue
     private Long id;
 
+    private int posX, posY;
+    private int capacity;
+    private int loadFactor;
+
     @OneToMany
     private List<Order> orders = new ArrayList<>();
 

@@ -21,7 +21,9 @@ public class Warehouse {
     @GeneratedValue
     private Long id;
 
-
+    private String name;
+    private String position;
+    private int capacity;
 
     @OneToMany
     private List<Shelve> shelves = new ArrayList<>();
