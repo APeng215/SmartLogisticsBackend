@@ -1,7 +1,9 @@
 package com.apeng.smartlogisticsbackend.entity;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,16 +13,15 @@ import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "`order`")
-public class Order {
+@NoArgsConstructor
+public class Shelve {
 
     @Id
     @GeneratedValue
     private Long id;
 
     @OneToMany
-    private List<Product> products = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
 
 }

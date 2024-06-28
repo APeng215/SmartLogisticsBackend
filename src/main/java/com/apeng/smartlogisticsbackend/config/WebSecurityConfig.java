@@ -1,6 +1,5 @@
 package com.apeng.smartlogisticsbackend.config;
 
-import com.apeng.smartlogisticsbackend.entity.Dish;
 import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.User;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +30,6 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public RepositoryRestConfiguration excludeUserRepoFromExposing(RepositoryRestConfiguration config) {
         config.setRepositoryDetectionStrategy(RepositoryDetectionStrategy.RepositoryDetectionStrategies.ANNOTATED);
         config.exposeIdsFor(User.class);
-        config.exposeIdsFor(Dish.class);
         config.exposeIdsFor(Order.class);
         return config;
     }
