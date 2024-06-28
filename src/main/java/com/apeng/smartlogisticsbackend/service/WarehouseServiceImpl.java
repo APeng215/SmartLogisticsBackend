@@ -12,33 +12,43 @@ import java.util.List;
 public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
-    private WarehouseRepository repository;
+    private WarehouseRepository warehouseRepository;
 
     @Override
     public Long insert(Warehouse warehouse) {
-        return repository.save(warehouse).getId();
+        return warehouseRepository.save(warehouse).getId();
     }
 
     @Override
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        warehouseRepository.deleteById(id);
     }
 
     @Override
     public Warehouse findById(Long id) {
-        return repository.findById(id).orElseThrow(RuntimeException::new);
+        return warehouseRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override
     public List<Warehouse> findAll() {
-        return repository.findAll();
+        return warehouseRepository.findAll();
+    }
+
+    @Override
+    public List<Warehouse> findByName(String name) {
+        return warehouseRepository.findByName(name);
+    }
+
+    @Override
+    public List<Warehouse> findByPosition(String position) {
+        return warehouseRepository.findByPosition(position);
     }
 
     @Override
     @Transactional
     public Warehouse update(Warehouse warehouse) {
         if (warehouse.getId() == null) return null;
-        return repository.save(warehouse);
+        return warehouseRepository.save(warehouse);
     }
 
 }

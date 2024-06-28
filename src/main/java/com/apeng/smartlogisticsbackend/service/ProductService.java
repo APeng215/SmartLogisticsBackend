@@ -10,5 +10,6 @@ public interface ProductService {
     void deleteById(Long id);
     Product findById(Long id);
     List<Product> findAll();
+    List<Product> findByName(String name);
     Product update(Product product);
 }

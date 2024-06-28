@@ -12,30 +12,30 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/order/{id}")
+    @GetMapping("/order/search/id/{id}")
     Order getOrderById(@PathVariable long id) {
         return orderService.findById(id);
     }
 
-    @GetMapping("/order")
+    @GetMapping("/order/search")
     List<Order> getAllOrder()
     {
         return orderService.findAll();
     }
 
-    @PostMapping("/order")
+    @PostMapping("/order/insert")
     Long insertOrder(@RequestBody Order order)
     {
         return orderService.insert(order);
     }
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/order/delete/id/{id}")
     void deleteOrderById(@PathVariable long id)
     {
         orderService.deleteById(id);
     }
 
-    @PutMapping("/order")
+    @PutMapping("/order/update")
     Order updateOrder(@RequestBody Order order)
     {
         return orderService.update(order);

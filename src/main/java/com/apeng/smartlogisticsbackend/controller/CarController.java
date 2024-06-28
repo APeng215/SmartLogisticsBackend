@@ -12,30 +12,35 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    @GetMapping("/car/{id}")
+    @GetMapping("/car/search/id/{id}")
     Car getCarById(@PathVariable long id) {
         return carService.findById(id);
     }
 
-    @GetMapping("/car")
+    @GetMapping("/car/search/name/{name}")
+    List<Car> getCarsByTransporter(@PathVariable String name) {
+        return carService.findByTransporter(name);
+    }
+
+    @GetMapping("/car/search")
     List<Car> getAllCar()
     {
         return carService.findAll();
     }
 
-    @PostMapping("/car")
+    @PostMapping("/car/insert")
     Long insertCar(@RequestBody Car car)
     {
         return carService.insert(car);
     }
 
-    @DeleteMapping("/car/{id}")
+    @DeleteMapping("/car/delete/id/{id}")
     void deleteCarById(@PathVariable long id)
     {
         carService.deleteById(id);
     }
 
-    @PutMapping("/car")
+    @PutMapping("/car/update")
     Car updateCar(@RequestBody Car car)
     {
         return carService.update(car);

@@ -12,30 +12,39 @@ public class WarehouseController {
     @Autowired
     private WarehouseService warehouseService;
 
-    @GetMapping("/warehouse/{id}")
+    @GetMapping("/warehouse/search/id/{id}")
     Warehouse getWarehouseById(@PathVariable long id) {
         return warehouseService.findById(id);
     }
 
-    @GetMapping("/warehouse")
+    @GetMapping("/warehouse/search/name/{name}")
+    List<Warehouse> getWarehousesByName(@PathVariable String name) {
+        return warehouseService.findByName(name);
+    }
+
+    @GetMapping("/warehouse/search/position/{position}")
+    List<Warehouse> getWarehousesByPosition(@PathVariable String position) {
+        return warehouseService.findByPosition(position);
+    }
+    @GetMapping("/warehouse/search")
     List<Warehouse> getAllWarehouse()
     {
         return warehouseService.findAll();
     }
 
-    @PostMapping("/warehouse")
+    @PostMapping("/warehouse/insert")
     Long insertWarehouse(@RequestBody Warehouse warehouse)
     {
         return warehouseService.insert(warehouse);
     }
 
-    @DeleteMapping("/warehouse/{id}")
+    @DeleteMapping("/warehouse/delete/id/{id}")
     void deleteWarehouseById(@PathVariable long id)
     {
         warehouseService.deleteById(id);
     }
 
-    @PutMapping("/warehouse")
+    @PutMapping("/warehouse/update")
     Warehouse updateWarehouse(@RequestBody Warehouse warehouse)
     {
         return warehouseService.update(warehouse);

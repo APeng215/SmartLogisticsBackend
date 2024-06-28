@@ -34,6 +34,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public List<Product> findByName(String name) {
+        return productRepository.findByName(name);
+    }
+
+    @Override
     @Transactional
     public Product update(Product product) {
         if(product.getId()==null) return null;
