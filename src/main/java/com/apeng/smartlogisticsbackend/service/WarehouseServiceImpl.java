@@ -5,12 +5,15 @@ import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
+import com.apeng.smartlogisticsbackend.repository.CarRepository;
 import com.apeng.smartlogisticsbackend.repository.OrderRepository;
 import com.apeng.smartlogisticsbackend.repository.ShelveRepository;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private CarRepository carRepository;
 
     @Override
     public Long insert(Warehouse warehouse) {
@@ -84,7 +90,11 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public void outbound(OutboundRequest outboundRequest) {
-
+    public synchronized void outbound(OutboundRequest outboundRequest) {
+        orderRepository.findAllById(outboundRequest.orderIds()).forEach(order -> {
+            order.setShelve(null);
+            order.setCar(carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!")));
+            orderRepository.save(order);
+        });
     }
 }
