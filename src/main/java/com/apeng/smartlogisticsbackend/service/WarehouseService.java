@@ -9,5 +9,7 @@ public interface WarehouseService {
     void deleteById(Long id);
     Warehouse findById(Long id);
     List<Warehouse> findAll();
+    List<Warehouse> findByName(String name);
+    List<Warehouse> findByPosition(String position);
     Warehouse update(Warehouse warehouse);
 }

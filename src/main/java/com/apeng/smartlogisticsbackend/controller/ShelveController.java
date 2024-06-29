@@ -12,30 +12,30 @@ public class ShelveController {
     @Autowired
     private ShelveService shelveService;
 
-    @GetMapping("/shelve/{id}")
+    @GetMapping("/shelve/search/id/{id}")
     Shelve getShelveById(@PathVariable long id) {
         return shelveService.findById(id);
     }
 
-    @GetMapping("/shelve")
+    @GetMapping("/shelve/search")
     List<Shelve> getAllShelve()
     {
         return shelveService.findAll();
     }
 
-    @PostMapping("/shelve")
+    @PostMapping("/shelve/insert")
     Long insertShelve(@RequestBody Shelve shelve)
     {
         return shelveService.insert(shelve);
     }
 
-    @DeleteMapping("/shelve/{id}")
+    @DeleteMapping("/shelve/delete/id/{id}")
     void deleteShelveById(@PathVariable long id)
     {
         shelveService.deleteById(id);
     }
 
-    @PutMapping("/shelve")
+    @PutMapping("/shelve/update")
     Shelve updateShelve(@RequestBody Shelve shelve)
     {
         return shelveService.update(shelve);

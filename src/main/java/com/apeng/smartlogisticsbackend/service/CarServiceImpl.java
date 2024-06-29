@@ -29,6 +29,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public List<Car> findByTransporter(String name) {
+        return null;
+    }
+
+    @Override
     public List<Car> findAll() {
         return repository.findAll();
     }
