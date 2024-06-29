@@ -1,7 +1,9 @@
 package com.apeng.smartlogisticsbackend.config;
 
+import com.apeng.smartlogisticsbackend.entity.Product;
 import com.apeng.smartlogisticsbackend.entity.User;
 import com.apeng.smartlogisticsbackend.entity.sub.Authority;
+import com.apeng.smartlogisticsbackend.repository.ProductRepository;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Configuration
@@ -49,6 +52,14 @@ public class CommonConfig {
         return (args) -> {
             repository.save(new User(CommonConfig.ADMIN_USERNAME, CommonConfig.ADMIN_PASSWORD, Set.of(new Authority(CommonConfig.ADMIN_USERNAME, "ROLE_ADMIN"), new Authority(CommonConfig.ADMIN_USERNAME, "ROLE_USER"))));
             repository.save(new User("player", "123456"));
+        };
+    }
+
+    @Bean
+    public CommandLineRunner addProducts(ProductRepository productRepository) {
+        return (args) -> {
+            productRepository.save(new Product("相机", "Soni", BigDecimal.valueOf(998)));
+            productRepository.save(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
         };
     }
 

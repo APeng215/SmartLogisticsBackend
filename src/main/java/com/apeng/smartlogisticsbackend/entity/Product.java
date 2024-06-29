@@ -15,11 +15,17 @@ public class Product {
 
     @Id
     @GeneratedValue
-
     private Long id;
 
     private String name;
     private String mallName;
     private BigDecimal price;
+
+
+    public Product(String name, String mallName, BigDecimal price) {
+        this.name = name;
+        this.mallName = mallName;
+        this.price = price;
+    }
 
 }
