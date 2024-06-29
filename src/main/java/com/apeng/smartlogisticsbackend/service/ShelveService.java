@@ -13,5 +13,6 @@ public interface ShelveService {
     List<Shelve> findShelvesByWarehouseId(Long id);
     Shelve update(Shelve shelve);
     boolean canAddOrder(Shelve shelve, Order order);
+    int distanceFrom(Shelve shelve,int startX, int startY);
 
 }

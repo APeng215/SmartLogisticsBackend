@@ -89,26 +89,34 @@ public class WarehouseServiceImpl implements WarehouseService {
     private Map<Order, Shelve> shelveSelect(List<Order> orders, long warehouseId) {
         List<Shelve> shelveList = shelveService.findShelvesByWarehouseId(warehouseId);
         Map<Order, Shelve> orderShelveMap = new HashMap<>();
+        int startX = 0, startY = 0;
         for (Order order : orders) {
-            Shelve bestShelve = findBestShelve(order, shelveList);
+            Shelve bestShelve = findBestShelve(order, shelveList,startX,startY);
             if (bestShelve != null) {
                 orderShelveMap.put(order, bestShelve);
+                startX = bestShelve.getPosX();
+                startY = bestShelve.getPosY();
+            }else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order " + order.getId() + " cannot be placed on any shelve.");
             }
         }
-        return null;
+        return orderShelveMap;
     }
-    private Shelve findBestShelve(Order order, List<Shelve> shelveList) {
+    private Shelve findBestShelve(Order order, List<Shelve> shelveList, int startX, int startY) {
         Shelve bestShelve = null;
         int maxLoadDifference = Integer.MIN_VALUE;
+        int minDistance = Integer.MAX_VALUE;
 
         for (Shelve shelve : shelveList) {
             if (shelveService.canAddOrder(shelve,order)) {
                 int loadDifference = shelve.getLoadFactor();
+                int distance = shelveService.distanceFrom(shelve,startX, startY);
 
-                // 选择剩余容量最大的货架
-                if (loadDifference > maxLoadDifference) {
+                // 选择剩余容量最大且距离最短的货架
+                if (loadDifference > maxLoadDifference || (loadDifference == maxLoadDifference && distance < minDistance)) {
                     bestShelve = shelve;
                     maxLoadDifference = loadDifference;
+                    minDistance = distance;
                 }
             }
         }

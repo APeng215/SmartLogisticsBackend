@@ -53,4 +53,10 @@ public class ShelveServiceImpl implements ShelveService {
             return false;
         }
     }
+
+    @Override
+    public int distanceFrom(Shelve shelve, int startX, int startY) {
+        return Math.abs(shelve.getPosX() - startX) + Math.abs(shelve.getPosY() - startY);
+    }
+
 }
