@@ -25,10 +25,13 @@ public class Order {
     private Date createTime;
     private Date updateTime;
     private String state;
+    private String consumerAddress;
     @ManyToOne
     private Car car;
     @ManyToOne
     private Product product;
+    @ManyToOne
+    private Shelve shelve;
     private int productNum = 1;
 
     public Order(Product product, int productNum) {

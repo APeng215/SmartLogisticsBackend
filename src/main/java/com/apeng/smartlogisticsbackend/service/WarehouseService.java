@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.InboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface WarehouseService {
     List<Warehouse> findByName(String name);
     List<Warehouse> findByPosition(String position);
     Warehouse update(Warehouse warehouse);
+    void inbound(InboundRequest inboundRequest);
 }

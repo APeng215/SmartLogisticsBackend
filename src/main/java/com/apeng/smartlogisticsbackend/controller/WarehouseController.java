@@ -1,5 +1,7 @@
 package com.apeng.smartlogisticsbackend.controller;
 
+import com.apeng.smartlogisticsbackend.dto.InboundRequest;
+import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.service.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,4 +52,10 @@ public class WarehouseController {
     {
         return warehouseService.update(warehouse);
     }
+
+    @PostMapping("/inbound")
+    void inbound(@RequestBody InboundRequest inboundRequest) {
+        warehouseService.inbound(inboundRequest);
+    }
+
 }
