@@ -25,7 +25,8 @@ public class Order {
     private Date updateTime;
     private String state;
 
-    @OneToMany
-    private List<Product> products = new ArrayList<>();
+    @ManyToOne
+    private Product product;
+    private int productNum;
 
 }
