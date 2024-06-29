@@ -8,34 +8,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/shelve")
 public class ShelveController {
     @Autowired
     private ShelveService shelveService;
 
-    @GetMapping("/shelve/search/id/{id}")
+    @GetMapping("/search/id/{id}")
     Shelve getShelveById(@PathVariable long id) {
         return shelveService.findById(id);
     }
 
-    @GetMapping("/shelve/search")
+    @GetMapping("/search")
     List<Shelve> getAllShelve()
     {
         return shelveService.findAll();
     }
 
-    @PostMapping("/shelve/insert")
+    @PostMapping("/insert")
     Long insertShelve(@RequestBody Shelve shelve)
     {
         return shelveService.insert(shelve);
     }
 
-    @DeleteMapping("/shelve/delete/id/{id}")
+    @DeleteMapping("/delete/id/{id}")
     void deleteShelveById(@PathVariable long id)
     {
         shelveService.deleteById(id);
     }
 
-    @PutMapping("/shelve/update")
+    @PutMapping("/update")
     Shelve updateShelve(@RequestBody Shelve shelve)
     {
         return shelveService.update(shelve);

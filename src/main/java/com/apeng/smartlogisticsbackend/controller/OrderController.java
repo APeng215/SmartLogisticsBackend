@@ -8,34 +8,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/order/search/id/{id}")
+    @GetMapping("/search/id/{id}")
     Order getOrderById(@PathVariable long id) {
         return orderService.findById(id);
     }
 
-    @GetMapping("/order/search")
+    @GetMapping("/search")
     List<Order> getAllOrder()
     {
         return orderService.findAll();
     }
 
-    @PostMapping("/order/insert")
+    @PostMapping("/insert")
     Long insertOrder(@RequestBody Order order)
     {
         return orderService.insert(order);
     }
 
-    @DeleteMapping("/order/delete/id/{id}")
+    @DeleteMapping("/delete/id/{id}")
     void deleteOrderById(@PathVariable long id)
     {
         orderService.deleteById(id);
     }
 
-    @PutMapping("/order/update")
+    @PutMapping("/update")
     Order updateOrder(@RequestBody Order order)
     {
         return orderService.update(order);
