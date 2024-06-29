@@ -39,13 +39,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 ## API 文档 *(WIP)*
 
-#### 创建订单 - 
-
-```json
-{
-  
-}
-```
+http://localhost:8081/swagger-ui/index.html
 
 
 
