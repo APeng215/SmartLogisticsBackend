@@ -1,6 +1,7 @@
 package com.apeng.smartlogisticsbackend.controller;
 
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
+import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.service.WarehouseService;
@@ -56,6 +57,11 @@ public class WarehouseController {
     @PostMapping("/inbound")
     void inbound(@RequestBody InboundRequest inboundRequest) {
         warehouseService.inbound(inboundRequest);
+    }
+
+    @PostMapping("/outbound")
+    void outbound(@RequestBody OutboundRequest outboundRequest) {
+        warehouseService.outbound(outboundRequest);
     }
 
 }

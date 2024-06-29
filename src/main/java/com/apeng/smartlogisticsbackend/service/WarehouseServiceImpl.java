@@ -1,6 +1,7 @@
 package com.apeng.smartlogisticsbackend.service;
 
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
+import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
@@ -82,4 +83,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         return null; // TODO
     }
 
+    @Override
+    public void outbound(OutboundRequest outboundRequest) {
+
+    }
 }
