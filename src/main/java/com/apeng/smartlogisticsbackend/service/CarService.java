@@ -6,7 +6,7 @@ import com.apeng.smartlogisticsbackend.entity.Product;
 import java.util.List;
 
 public interface CarService {
-    Long insert(Car car);
+    Long insert(Car car); // test git
     void deleteById(Long id);
     Car findById(Long id);
     List<Car> findByTransporter(String name);
