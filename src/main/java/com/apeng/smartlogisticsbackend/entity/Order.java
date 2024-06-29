@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.entity;
 
+import com.apeng.smartlogisticsbackend.dto.OrderRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,13 @@ public class Order {
 
     @ManyToOne
     private Product product;
-    private int productNum;
+    private int productNum = 1;
+
+    public Order(Product product, int productNum) {
+        createTime = updateTime = new Date();
+        state = "待入库";
+        this.product = product;
+        this.productNum = productNum;
+    }
 
 }
