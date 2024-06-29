@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,7 +21,6 @@ public class Product {
     private String name;
     private String mallName;
     private BigDecimal price;
-
 
     public Product(String name, String mallName, BigDecimal price) {
         this.name = name;

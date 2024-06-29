@@ -23,7 +23,4 @@ public class Car {
     @ManyToOne
     private Warehouse warehouse;
 
-    @OneToMany
-    private List<Order> orders = new ArrayList<>();
-
 }

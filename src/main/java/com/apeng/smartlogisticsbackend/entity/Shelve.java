@@ -24,7 +24,4 @@ public class Shelve {
     @ManyToOne
     private Warehouse warehouse;
 
-    @OneToMany
-    private List<Order> orders = new ArrayList<>();
-
 }
