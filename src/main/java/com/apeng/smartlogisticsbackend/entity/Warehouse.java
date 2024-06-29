@@ -31,4 +31,11 @@ public class Warehouse {
     @OneToMany
     private List<Car> cars = new ArrayList<>();
 
+
+    public Warehouse(String name, String position, int capacity) {
+        this.name = name;
+        this.position = position;
+        this.capacity = capacity;
+    }
+
 }

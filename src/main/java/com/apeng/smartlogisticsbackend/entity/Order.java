@@ -25,7 +25,8 @@ public class Order {
     private Date createTime;
     private Date updateTime;
     private String state;
-
+    @ManyToOne
+    private Car car;
     @ManyToOne
     private Product product;
     private int productNum = 1;
