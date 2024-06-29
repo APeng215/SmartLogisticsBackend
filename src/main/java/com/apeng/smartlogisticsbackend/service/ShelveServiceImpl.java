@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.repository.ShelveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,31 +12,45 @@ import java.util.List;
 public class ShelveServiceImpl implements ShelveService {
 
     @Autowired
-    ShelveRepository repository;
+    ShelveRepository shelveRepository;
 
     @Override
     public Long insert(Shelve shelve) {
-        return repository.save(shelve).getId();
+        return shelveRepository.save(shelve).getId();
     }
 
     @Override
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        shelveRepository.deleteById(id);
     }
 
     @Override
     public Shelve findById(Long id) {
-        return repository.findById(id).orElseThrow(RuntimeException::new);
+        return shelveRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override
     public List<Shelve> findAll() {
-        return repository.findAll();
+        return shelveRepository.findAll();
+    }
+
+    @Override
+    public List<Shelve> findShelvesByWarehouseId(Long id) {
+        return shelveRepository.findShelvesByWarehouseId(id);
     }
 
     @Override
     public Shelve update(Shelve shelve) {
         if (shelve.getId() == null) return null;
-        return repository.save(shelve);
+        return shelveRepository.save(shelve);
+    }
+
+    @Override
+    public boolean canAddOrder(Shelve shelve, Order order) {
+        if(shelve.getCapacity()>=shelve.getLoadFactor()+order.getProductNum()){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

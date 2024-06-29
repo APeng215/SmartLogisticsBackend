@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     private WarehouseRepository warehouseRepository;
 
     @Autowired
-    private ShelveRepository shelveRepository;
+    private ShelveService shelveService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -86,9 +87,34 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @return 订单到对应货架的映射
      */
     private Map<Order, Shelve> shelveSelect(List<Order> orders, long warehouseId) {
-        return null; // TODO
+        List<Shelve> shelveList = shelveService.findShelvesByWarehouseId(warehouseId);
+        Map<Order, Shelve> orderShelveMap = new HashMap<>();
+        for (Order order : orders) {
+            Shelve bestShelve = findBestShelve(order, shelveList);
+            if (bestShelve != null) {
+                orderShelveMap.put(order, bestShelve);
+            }
+        }
+        return null;
     }
+    private Shelve findBestShelve(Order order, List<Shelve> shelveList) {
+        Shelve bestShelve = null;
+        int maxLoadDifference = Integer.MIN_VALUE;
 
+        for (Shelve shelve : shelveList) {
+            if (shelveService.canAddOrder(shelve,order)) {
+                int loadDifference = shelve.getLoadFactor();
+
+                // 选择剩余容量最大的货架
+                if (loadDifference > maxLoadDifference) {
+                    bestShelve = shelve;
+                    maxLoadDifference = loadDifference;
+                }
+            }
+        }
+
+        return bestShelve;
+    }
     @Override
     public synchronized void outbound(OutboundRequest outboundRequest) {
         orderRepository.findAllById(outboundRequest.orderIds()).forEach(order -> {
