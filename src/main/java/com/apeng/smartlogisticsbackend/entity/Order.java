@@ -25,7 +25,8 @@ public class Order {
     private Date createTime;
     private Date updateTime;
     private String state;
-    private String consumerAddress;
+    @ManyToOne
+    private Warehouse targetWarehouse;
     @ManyToOne
     private Car car;
     @ManyToOne
@@ -34,12 +35,12 @@ public class Order {
     private Shelve shelve;
     private int productNum = 1;
 
-    public Order(Product product, int productNum, String consumerAddress) {
+    public Order(Product product, int productNum, Warehouse targetWarehouse) {
         createTime = updateTime = new Date();
         state = "待入库";
         this.product = product;
         this.productNum = productNum;
-        this.consumerAddress = consumerAddress;
+        this.targetWarehouse = targetWarehouse;
     }
 
 }

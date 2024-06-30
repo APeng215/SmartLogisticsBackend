@@ -66,17 +66,7 @@ public class CommonConfig {
         };
     }
 
-    @Bean
-    public CommandLineRunner addProducts(ProductService productService,OrderService orderService) {
-        return (args) -> {
-            productService.insert(new Product("相机", "Soni", BigDecimal.valueOf(998)));
-            productService.insert(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
-            orderService.insert(new Order(productService.findById(1L),2,null));
-            orderService.insert(new Order(productService.findById(1L),3,null));
-            orderService.insert(new Order(productService.findById(1L),4,null));
-        };
-    }
-
+    @org.springframework.core.annotation.Order(1)
     @Bean
     public CommandLineRunner addWarehouseAndCar(WarehouseService warehouseService, CarService carService) {
         return (args) -> {
@@ -86,6 +76,18 @@ public class CommonConfig {
             carService.insert(new Car("万浩", "停靠中", warehouseService.findById(1L)));
             carService.insert(new Car("车车", "停靠中", warehouseService.findById(1L)));
             carService.insert(new Car("神奈", "停靠中", warehouseService.findById(1L)));
+        };
+    }
+
+    @org.springframework.core.annotation.Order(2)
+    @Bean
+    public CommandLineRunner addProducts(ProductService productService, OrderService orderService, WarehouseService warehouseService) {
+        return (args) -> {
+            productService.insert(new Product("相机", "Soni", BigDecimal.valueOf(998)));
+            productService.insert(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
+            orderService.insert(new Order(productService.findById(1L),2,warehouseService.findById(1L)));
+            orderService.insert(new Order(productService.findById(1L),3,warehouseService.findById(2L)));
+            orderService.insert(new Order(productService.findById(1L),4,warehouseService.findById(2L)));
         };
     }
 

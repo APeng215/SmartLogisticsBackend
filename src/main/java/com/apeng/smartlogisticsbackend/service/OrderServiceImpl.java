@@ -24,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    WarehouseService warehouseService;
+
     @Override
     public Long insert(Order order) {
         return orderRepository.save(order).getId();
@@ -56,12 +59,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse submit(OrderRequest orderRequest) {
+        validateProductNum(orderRequest);
+        return doSubmit(orderRequest);
+    }
+
+    private OrderResponse doSubmit(OrderRequest orderRequest) {
         Product product = productRepository.findById(orderRequest.productId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the product in database!"));
+        Order order = new Order(product, orderRequest.productNum(), warehouseService.findById(orderRequest.targetWarehouseId()));
+        return new OrderResponse(orderRepository.save(order));
+    }
+
+    private static void validateProductNum(OrderRequest orderRequest) {
         if (orderRequest.productNum() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product number cannot be lower or equal to 0");
         }
-        Order order = new Order(product, orderRequest.productNum(), orderRequest.consumerAddress());
-        return new OrderResponse(orderRepository.save(order));
     }
 
 }
