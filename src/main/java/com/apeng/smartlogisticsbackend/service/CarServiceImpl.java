@@ -1,9 +1,13 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
+import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -11,21 +15,24 @@ import java.util.List;
 public class CarServiceImpl implements CarService {
 
     @Autowired
-    CarRepository repository;
+    CarRepository carRepository;
+
+    @Autowired
+    WarehouseService warehouseService;
 
     @Override
     public Long insert(Car car) {
-        return repository.save(car).getId();
+        return carRepository.save(car).getId();
     }
 
     @Override
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        carRepository.deleteById(id);
     }
 
     @Override
     public Car findById(Long id) {
-        return repository.findById(id).orElseThrow(RuntimeException::new);
+        return carRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @Override
@@ -34,13 +41,33 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public synchronized Car setout(CarSetoutRequest carSetoutRequest) {
+        Car car = carRepository.findById(carSetoutRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d not found!", carSetoutRequest.carId())));
+        Warehouse targetWarehouse = warehouseService.findById(carSetoutRequest.targetWarehouseId());
+        validaCarState(car);
+        doSetout(car, targetWarehouse);
+        return carRepository.save(car);
+    }
+
+    private static void validaCarState(Car car) {
+        if (!car.getState().equals("停靠中")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car is not in parking!");
+        }
+    }
+
+    private static void doSetout(Car car, Warehouse targetWarehouse) {
+        car.setTargetWarehouse(targetWarehouse);
+        car.setState("运输中");
+    }
+
+    @Override
     public List<Car> findAll() {
-        return repository.findAll();
+        return carRepository.findAll();
     }
 
     @Override
     public Car update(Car car) {
         if (car.getId() == null) return null;
-        return repository.save(car);
+        return carRepository.save(car);
     }
 }

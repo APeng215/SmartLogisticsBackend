@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.controller;
 
+import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.service.CarService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,4 +50,11 @@ public class CarController {
     public Car updateCar(@RequestBody Car car) {
         return carService.update(car);
     }
+
+    @Operation(summary = "车辆出发")
+    @PutMapping("/setout")
+    public Car move(@RequestBody CarSetoutRequest carSetoutRequest) {
+        return carService.setout(carSetoutRequest);
+    }
+
 }
