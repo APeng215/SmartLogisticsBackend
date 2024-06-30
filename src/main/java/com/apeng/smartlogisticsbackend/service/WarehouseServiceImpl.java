@@ -160,6 +160,13 @@ public class WarehouseServiceImpl implements WarehouseService {
     private static void validate(OutboundRequest outboundRequest, Order order, Car car) {
         validateInbounding(order);
         validateCarPos(outboundRequest, order, car);
+        validateCarState(car);
+    }
+
+    private static void validateCarState(Car car) {
+        if (!car.getState().equals("停靠中")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d is not in transit!", car.getId()));
+        }
     }
 
     private void doOutbound(OutboundRequest outboundRequest, Order order) {
