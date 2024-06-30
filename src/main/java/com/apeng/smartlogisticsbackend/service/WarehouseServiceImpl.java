@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,15 +99,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
             key.setState("已入库");
+            key.setUpdateTime(new Date());
             shelveService.update(value);
             orderRepository.save(key);
         });
-        if(inboundRequest.carId()!=null)
+        if(inboundRequest.carId()!=0)
         {
+            //入库的订单与相关联的车辆解绑
             orderRepository.findOrdersByCarId(inboundRequest.carId()).forEach((key)->{
-                key.setCar(carRepository.findById(inboundRequest.carId()).orElseThrow(()->{
-                    throw new RuntimeException("carId:"+inboundRequest.carId()+" is not found in database");
-                }));
+                key.setCar(null);
+                orderRepository.save(key);
             });
         }
     }
