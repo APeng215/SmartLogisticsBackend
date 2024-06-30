@@ -101,6 +101,14 @@ public class WarehouseServiceImpl implements WarehouseService {
             shelveService.update(value);
             orderRepository.save(key);
         });
+        if(inboundRequest.carId()!=null)
+        {
+            orderRepository.findOrdersByCarId(inboundRequest.carId()).forEach((key)->{
+                key.setCar(carRepository.findById(inboundRequest.carId()).orElseThrow(()->{
+                    throw new RuntimeException("carId:"+inboundRequest.carId()+" is not found in database");
+                }));
+            });
+        }
     }
 
     /**
