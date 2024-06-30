@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.entity.Product;
 
@@ -10,7 +11,7 @@ public interface CarService {
     void deleteById(Long id);
     Car findById(Long id);
     List<Car> findByTransporter(String name);
-
+    Car setout(CarSetoutRequest carSetoutRequest);
     List<Car> findAll();
     Car update(Car car);
 }
