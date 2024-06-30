@@ -1,6 +1,5 @@
 package com.apeng.smartlogisticsbackend.service;
 
-import com.apeng.smartlogisticsbackend.config.CommonConfig;
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
 import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
