@@ -1,6 +1,7 @@
 package com.apeng.smartlogisticsbackend.service;
 
 import com.apeng.smartlogisticsbackend.dto.OrderRequest;
+import com.apeng.smartlogisticsbackend.dto.OrderResponse;
 import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Product;
 import com.apeng.smartlogisticsbackend.repository.OrderRepository;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,29 +35,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(RuntimeException::new);
+    public OrderResponse findById(Long id) {
+        return new OrderResponse(orderRepository.findById(id).orElseThrow(RuntimeException::new));
     }
 
     @Override
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public List<OrderResponse> findAll() {
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        orderRepository.findAll().forEach(order -> {
+            orderResponses.add(new OrderResponse(order));
+        });
+        return orderResponses;
     }
 
     @Override
-    public Order update(Order order) {
+    public OrderResponse update(Order order) {
         if (order.getId() == null) return null;
-        return orderRepository.save(order);
+        return new OrderResponse(orderRepository.save(order));
     }
 
     @Override
-    public Order submit(OrderRequest orderRequest) {
+    public OrderResponse submit(OrderRequest orderRequest) {
         Product product = productRepository.findById(orderRequest.productId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the product in database!"));
         if (orderRequest.productNum() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product number cannot be lower or equal to 0");
         }
-        Order order = new Order(product, orderRequest.productNum());
-        return orderRepository.save(order);
+        Order order = new Order(product, orderRequest.productNum(), orderRequest.consumerAddress());
+        return new OrderResponse(orderRepository.save(order));
     }
 
 }

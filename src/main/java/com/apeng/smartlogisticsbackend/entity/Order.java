@@ -34,11 +34,12 @@ public class Order {
     private Shelve shelve;
     private int productNum = 1;
 
-    public Order(Product product, int productNum) {
+    public Order(Product product, int productNum, String consumerAddress) {
         createTime = updateTime = new Date();
         state = "待入库";
         this.product = product;
         this.productNum = productNum;
+        this.consumerAddress = consumerAddress;
     }
 
 }
