@@ -76,6 +76,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<Order> orders = orderRepository.findAllById(inboundRequest.orderIds());
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
+            key.setState("已入库");
             orderRepository.save(key);
         });
     }
