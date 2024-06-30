@@ -34,9 +34,26 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Autowired
     private CarRepository carRepository;
 
+
     @Override
     public Long insert(Warehouse warehouse) {
-        return warehouseRepository.save(warehouse).getId();
+        Long ret = warehouseRepository.save(warehouse).getId();
+        int rows = 2; // Number of rows
+        int shelvesPerRow = (int) Math.ceil((double) warehouse.getCapacity() / rows);
+        int count=0;
+        for (int row = 0; row < rows; row++) {
+            for (int i = 0; i < shelvesPerRow; i++) {
+                int posY = i + 1;
+                int posX = row + 1;
+                if(count >= warehouse.getCapacity()) {
+                    break;
+                }
+                Shelve shelve = new Shelve(posX, posY, warehouse);
+                count++;
+                shelveService.insert(shelve);
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -77,6 +94,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
             key.setState("已入库");
+            shelveService.update(value);
             orderRepository.save(key);
         });
     }
@@ -95,6 +113,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             Shelve bestShelve = findBestShelve(order, shelveList,startX,startY);
             if (bestShelve != null) {
                 orderShelveMap.put(order, bestShelve);
+                bestShelve.setLoadFactor(bestShelve.getLoadFactor()+order.getProductNum());
+
                 startX = bestShelve.getPosX();
                 startY = bestShelve.getPosY();
             }else {

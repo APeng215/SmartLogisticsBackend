@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.config;
 
+import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Product;
 import com.apeng.smartlogisticsbackend.entity.User;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
@@ -7,6 +8,9 @@ import com.apeng.smartlogisticsbackend.entity.sub.Authority;
 import com.apeng.smartlogisticsbackend.repository.ProductRepository;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
+import com.apeng.smartlogisticsbackend.service.OrderService;
+import com.apeng.smartlogisticsbackend.service.ProductService;
+import com.apeng.smartlogisticsbackend.service.WarehouseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -58,19 +62,22 @@ public class CommonConfig {
     }
 
     @Bean
-    public CommandLineRunner addProducts(ProductRepository productRepository) {
+    public CommandLineRunner addProducts(ProductService productService,OrderService orderService) {
         return (args) -> {
-            productRepository.save(new Product("相机", "Soni", BigDecimal.valueOf(998)));
-            productRepository.save(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
+            productService.insert(new Product("相机", "Soni", BigDecimal.valueOf(998)));
+            productService.insert(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
+            orderService.insert(new Order(productService.findById(1L),2,null));
+            orderService.insert(new Order(productService.findById(1L),3,null));
+            orderService.insert(new Order(productService.findById(1L),4,null));
         };
     }
 
     @Bean
-    public CommandLineRunner addWarehouse(WarehouseRepository warehouseRepository) {
+    public CommandLineRunner addWarehouse(WarehouseService warehouseService) {
         return (args) -> {
-            warehouseRepository.save(new Warehouse("荷园驿站", "荷园6号楼", 660));
-            warehouseRepository.save(new Warehouse("柳园驿站", "柳园6号楼", 20));
-            warehouseRepository.save(new Warehouse("松园驿站", "松园5号楼", 220));
+            warehouseService.insert(new Warehouse("荷园驿站", "荷园6号楼", 4));
+            warehouseService.insert(new Warehouse("柳园驿站", "柳园6号楼", 5));
+            warehouseService.insert(new Warehouse("松园驿站", "松园5号楼", 6));
         };
     }
 
