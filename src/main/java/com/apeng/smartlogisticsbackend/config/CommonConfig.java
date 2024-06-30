@@ -1,13 +1,10 @@
 package com.apeng.smartlogisticsbackend.config;
 
-import com.apeng.smartlogisticsbackend.entity.Order;
-import com.apeng.smartlogisticsbackend.entity.Product;
-import com.apeng.smartlogisticsbackend.entity.User;
-import com.apeng.smartlogisticsbackend.entity.Warehouse;
+import com.apeng.smartlogisticsbackend.entity.*;
 import com.apeng.smartlogisticsbackend.entity.sub.Authority;
-import com.apeng.smartlogisticsbackend.repository.ProductRepository;
+import com.apeng.smartlogisticsbackend.repository.CarRepository;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
-import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
+import com.apeng.smartlogisticsbackend.service.CarService;
 import com.apeng.smartlogisticsbackend.service.OrderService;
 import com.apeng.smartlogisticsbackend.service.ProductService;
 import com.apeng.smartlogisticsbackend.service.WarehouseService;
@@ -73,11 +70,14 @@ public class CommonConfig {
     }
 
     @Bean
-    public CommandLineRunner addWarehouse(WarehouseService warehouseService) {
+    public CommandLineRunner addWarehouseAndCar(WarehouseService warehouseService, CarService carService) {
         return (args) -> {
             warehouseService.insert(new Warehouse("荷园驿站", "荷园6号楼", 4));
             warehouseService.insert(new Warehouse("柳园驿站", "柳园6号楼", 5));
             warehouseService.insert(new Warehouse("松园驿站", "松园5号楼", 6));
+            carService.insert(new Car("万浩", "停靠中", warehouseService.findById(1L)));
+            carService.insert(new Car("车车", "停靠中", warehouseService.findById(1L)));
+            carService.insert(new Car("神奈", "停靠中", warehouseService.findById(1L)));
         };
     }
 

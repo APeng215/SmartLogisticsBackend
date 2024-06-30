@@ -2,6 +2,7 @@ package com.apeng.smartlogisticsbackend.service;
 
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
 import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
+import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
@@ -10,9 +11,12 @@ import com.apeng.smartlogisticsbackend.repository.OrderRepository;
 import com.apeng.smartlogisticsbackend.repository.ShelveRepository;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
+import org.apache.tomcat.websocket.server.WsHttpUpgradeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
@@ -147,9 +151,48 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public synchronized void outbound(OutboundRequest outboundRequest) {
         orderRepository.findAllById(outboundRequest.orderIds()).forEach(order -> {
-            order.setShelve(null);
-            order.setCar(carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!")));
-            orderRepository.save(order);
+            Car car = carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d not founded!", outboundRequest.carId())));
+            validate(outboundRequest, order, car);
+            doOutbound(outboundRequest, order);
         });
+    }
+
+    private static void validate(OutboundRequest outboundRequest, Order order, Car car) {
+        validateInbounding(order);
+        validateCarPos(outboundRequest, order, car);
+    }
+
+    private void doOutbound(OutboundRequest outboundRequest, Order order) {
+        decreaseShelveLoadFactor(order);
+        boundOrder(outboundRequest, order);
+    }
+
+    private static void validateCarPos(OutboundRequest outboundRequest, Order order, Car car) {
+        if (!isCarInWarehouseOfOrder(order, car)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d is not in Warehouse %d!", outboundRequest.carId(), order.getShelve().getWarehouse().getId()));
+        }
+    }
+
+    private static boolean isCarInWarehouseOfOrder(Order order, Car car) {
+        return order.getShelve().getWarehouse().equals(car.getWarehouse());
+    }
+
+    private static void validateInbounding(Order order) {
+        if (order.getShelve() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Order(Id %d) has not been inbounded!", order.getId()));
+        }
+    }
+
+    private void boundOrder(OutboundRequest outboundRequest, Order order) {
+        order.setShelve(null);
+        order.setCar(carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!")));
+        order.setState("已出库");
+        orderRepository.save(order);
+    }
+
+    private void decreaseShelveLoadFactor(Order order) {
+        Shelve shelve = order.getShelve();
+        shelve.setLoadFactor(shelve.getLoadFactor() - order.getProductNum());
+        shelveService.update(shelve);
     }
 }
