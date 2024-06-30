@@ -204,6 +204,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         order.setShelve(null);
         order.setCar(carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!")));
         order.setState("已出库");
+        order.setUpdateTime(new Date());
         orderRepository.save(order);
     }
 
