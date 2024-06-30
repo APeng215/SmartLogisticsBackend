@@ -1,12 +1,12 @@
 package com.apeng.smartlogisticsbackend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.apeng.smartlogisticsbackend.service.ShelveService;
+import com.apeng.smartlogisticsbackend.service.ShelveServiceImpl;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +30,6 @@ public class Warehouse {
         this.position = position;
         this.capacity = capacity;
     }
+
 
 }

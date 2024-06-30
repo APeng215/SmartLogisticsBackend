@@ -24,4 +24,12 @@ public class Shelve {
     @ManyToOne
     private Warehouse warehouse;
 
+    // Constructor with Warehouse parameter
+    public Shelve(int posX, int posY, Warehouse warehouse) {
+        this.posX = posX;
+        this.posY = posY;
+        this.capacity = 4; // Fixed capacity for shelves
+        this.warehouse = warehouse;
+    }
+
 }
