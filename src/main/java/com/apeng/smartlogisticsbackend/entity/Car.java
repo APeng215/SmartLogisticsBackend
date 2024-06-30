@@ -23,4 +23,10 @@ public class Car {
     @ManyToOne
     private Warehouse warehouse;
 
+    public Car(String transporter, String state, Warehouse warehouse) {
+        this.transporter = transporter;
+        this.state = state;
+        this.warehouse = warehouse;
+    }
+
 }
