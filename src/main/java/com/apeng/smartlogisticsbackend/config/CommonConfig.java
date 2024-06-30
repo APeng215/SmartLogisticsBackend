@@ -66,9 +66,9 @@ public class CommonConfig {
         return (args) -> {
             productService.insert(new Product("相机", "Soni", BigDecimal.valueOf(998)));
             productService.insert(new Product("手机", "Apple", BigDecimal.valueOf(6000)));
-            orderService.insert(new Order(productService.findById(1L),2));
-            orderService.insert(new Order(productService.findById(1L),3));
-            orderService.insert(new Order(productService.findById(1L),4));
+            orderService.insert(new Order(productService.findById(1L),2,null));
+            orderService.insert(new Order(productService.findById(1L),3,null));
+            orderService.insert(new Order(productService.findById(1L),4,null));
         };
     }
 
