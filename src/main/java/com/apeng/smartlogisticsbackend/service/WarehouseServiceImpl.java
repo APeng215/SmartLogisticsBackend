@@ -13,6 +13,8 @@ import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.Response;
 import org.apache.tomcat.websocket.server.WsHttpUpgradeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,8 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private CarRepository carRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(WarehouseService.class);
 
 
     @Override
@@ -96,23 +100,17 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public synchronized void inbound(InboundRequest inboundRequest) {
         List<Order> orders = orderRepository.findAllById(inboundRequest.orderIds());
+
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
             key.setState("已入库");
             key.setUpdateTime(new Date());
             shelveService.update(value);
+            key.setCar(null);
             orderRepository.save(key);
         });
-        if(inboundRequest.carId()!=0)
-        {
-            //入库的订单与相关联的车辆解绑
-            orderRepository.findOrdersByCarId(inboundRequest.carId()).forEach((key)->{
-                key.setCar(null);
-                orderRepository.save(key);
-            });
-        }
-    }
 
+    }
     /**
      * 货架选择算法
      * @param orders 需要计算目标货架的订单
@@ -162,12 +160,20 @@ public class WarehouseServiceImpl implements WarehouseService {
     public synchronized void outbound(OutboundRequest outboundRequest) {
         orderRepository.findAllById(outboundRequest.orderIds()).forEach(order -> {
             Car car = carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d not founded!", outboundRequest.carId())));
-            validate(outboundRequest, order, car);
-            doOutbound(outboundRequest, order);
+            try2Outbound(outboundRequest, order, car);
         });
     }
 
-    private static void validate(OutboundRequest outboundRequest, Order order, Car car) {
+    private void try2Outbound(OutboundRequest outboundRequest, Order order, Car car) {
+        try {
+            validate(outboundRequest, order, car);
+            doOutbound(outboundRequest, order);
+        } catch (ResponseStatusException e) {
+            logger.info(String.format("Order(%d) can not been served by the car(%d)!", order.getId(), car.getId()));
+        }
+    }
+
+    private void validate(OutboundRequest outboundRequest, Order order, Car car) {
         validateInbounding(order);
         validateCarPos(outboundRequest, order, car);
         validateCarState(car);
