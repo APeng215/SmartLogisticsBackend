@@ -8,6 +8,7 @@ import java.util.List;
 public interface CarService {
     Long insert(Car car);
     void deleteById(Long id);
+    void deleteByIdList(List<Long> idList);
     Car findById(Long id);
     List<Car> findByTransporter(String name);
     Car setout(CarSetoutRequest carSetoutRequest);

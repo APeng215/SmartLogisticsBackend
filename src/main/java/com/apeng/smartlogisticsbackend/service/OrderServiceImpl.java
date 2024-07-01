@@ -64,6 +64,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponse> findByState(String state) {
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        orderRepository.findOrdersByState(state).forEach(order->{
+            orderResponses.add(new OrderResponse(order));
+        });
+        return orderResponses;
+    }
+
+    @Override
+    public void deleteByIdList(List<Long> idList) {
+        orderRepository.deleteAllById(idList);
+    }
+
+    @Override
     public List<Order> findOrdersByCarId(long id) {
         return orderRepository.findOrdersByCarId(id);
     }

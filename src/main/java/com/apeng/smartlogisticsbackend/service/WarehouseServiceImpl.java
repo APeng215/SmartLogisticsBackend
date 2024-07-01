@@ -71,6 +71,11 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    public void deleteByIdList(List<Long> idList) {
+        warehouseRepository.deleteAllById(idList);
+    }
+
+    @Override
     public Warehouse findById(Long id) {
         return warehouseRepository.findById(id).orElseThrow(RuntimeException::new);
     }
@@ -201,7 +206,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     private static void validateInbounding(Order order) {
-        if (order.getShelve() == null) {
+        if (order.getShelve() == null || !order.getState().equals("已入库")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Order(Id %d) has not been inbounded!", order.getId()));
         }
     }

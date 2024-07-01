@@ -25,6 +25,11 @@ public class ShelveServiceImpl implements ShelveService {
     }
 
     @Override
+    public void deleteByIdList(List<Long> idList) {
+        shelveRepository.deleteAllById(idList);
+    }
+
+    @Override
     public Shelve findById(Long id) {
         return shelveRepository.findById(id).orElseThrow(RuntimeException::new);
     }

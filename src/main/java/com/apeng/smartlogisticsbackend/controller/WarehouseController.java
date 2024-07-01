@@ -52,6 +52,12 @@ public class WarehouseController {
         warehouseService.deleteById(id);
     }
 
+    @Operation(summary = "通过仓库的ID列表删除仓库")
+    @DeleteMapping("/delete/idList")
+    public void deleteWarehouseByIdList(@RequestBody List<Long> idList){
+        warehouseService.deleteByIdList(idList);
+    }
+
     @Operation(summary = "更新仓库信息")
     @PutMapping("/update")
     public Warehouse updateWarehouse(@RequestBody Warehouse warehouse) {

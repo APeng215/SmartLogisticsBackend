@@ -35,6 +35,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public void deleteByIdList(List<Long> idList) {
+        carRepository.deleteAllById(idList);
+    }
+
+    @Override
     public Car findById(Long id) {
         return carRepository.findById(id).orElseThrow(RuntimeException::new);
     }

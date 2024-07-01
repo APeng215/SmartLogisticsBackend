@@ -24,6 +24,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public void deleteByIdList(List<Long> idList) {
+        productRepository.deleteAllById(idList);
+    }
+
+    @Override
     public Product findById(Long id) {
         return productRepository.findById(id).orElseThrow(RuntimeException::new);
     }

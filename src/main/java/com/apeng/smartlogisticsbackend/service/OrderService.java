@@ -13,5 +13,7 @@ public interface OrderService {
     List<OrderResponse> findAll();
     OrderResponse update(Order order);
     OrderResponse submit(OrderRequest order);
+    List<OrderResponse> findByState(String state);
+    void deleteByIdList(List<Long> idList);
     List<Order> findOrdersByCarId(long id);
 }

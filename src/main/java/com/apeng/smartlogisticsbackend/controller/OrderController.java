@@ -22,6 +22,12 @@ public class OrderController {
         return orderService.findById(id);
     }
 
+    @Operation(summary = "通过订单状态获取订单信息")
+    @GetMapping("/search/state/{state}")
+    public List<OrderResponse> getOrderByState(@PathVariable String state) {
+        return orderService.findByState(state);
+    }
+
     @Operation(summary = "获取所有订单信息")
     @GetMapping("/search")
     public List<OrderResponse> getAllOrder() {
@@ -38,6 +44,12 @@ public class OrderController {
     @DeleteMapping("/delete/id/{id}")
     public void deleteOrderById(@PathVariable long id) {
         orderService.deleteById(id);
+    }
+
+    @Operation(summary = "通过订单的ID列表删除订单")
+    @DeleteMapping("/delete/idList")
+    public void deleteOrderByIdList(@RequestBody List<Long> idList){
+        orderService.deleteByIdList(idList);
     }
 
     @Operation(summary = "更新订单信息")
