@@ -8,6 +8,7 @@ import java.util.List;
 public interface ShelveService {
     Long insert(Shelve shelve);
     void deleteById(Long id);
+    void deleteByIdList(List<Long> idList);
     Shelve findById(Long id);
     List<Shelve> findAll();
     List<Shelve> findShelvesByWarehouseId(Long id);

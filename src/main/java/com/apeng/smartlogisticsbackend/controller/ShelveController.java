@@ -38,6 +38,12 @@ public class ShelveController {
         shelveService.deleteById(id);
     }
 
+    @Operation(summary = "通过货架的ID列表删除货架")
+    @DeleteMapping("/delete/idList")
+    public void deleteShelveByIdList(@RequestBody List<Long> idList){
+        shelveService.deleteByIdList(idList);
+    }
+
     @Operation(summary = "更新货架信息")
     @PutMapping("/update")
     public Shelve updateShelve(@RequestBody Shelve shelve) {

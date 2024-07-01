@@ -44,6 +44,12 @@ public class ProductController {
         productService.deleteById(id);
     }
 
+    @Operation(summary = "通过产品的ID列表删除产品")
+    @DeleteMapping("/delete/idList")
+    public void deleteProductByIdList(@RequestBody List<Long> idList){
+        productService.deleteByIdList(idList);
+    }
+
     @Operation(summary = "更新产品信息")
     @PutMapping("/update")
     public Product updateProduct(@RequestBody Product product) {

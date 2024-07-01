@@ -45,6 +45,12 @@ public class CarController {
         carService.deleteById(id);
     }
 
+    @Operation(summary = "通过车辆的ID列表删除车辆")
+    @DeleteMapping("/delete/idList")
+    public void deleteCarByIdList(@RequestBody List<Long> idList){
+        carService.deleteByIdList(idList);
+    }
+
     @Operation(summary = "更新车辆信息")
     @PutMapping("/update")
     public Car updateCar(@RequestBody Car car) {
