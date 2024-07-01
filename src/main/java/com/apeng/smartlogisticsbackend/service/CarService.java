@@ -2,7 +2,6 @@ package com.apeng.smartlogisticsbackend.service;
 
 import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
-import com.apeng.smartlogisticsbackend.entity.Product;
 
 import java.util.List;
 
@@ -14,4 +13,5 @@ public interface CarService {
     Car setout(CarSetoutRequest carSetoutRequest);
     List<Car> findAll();
     Car update(Car car);
+    Car arrive(long carId);
 }

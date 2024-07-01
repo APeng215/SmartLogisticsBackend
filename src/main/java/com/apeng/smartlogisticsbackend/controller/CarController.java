@@ -53,8 +53,14 @@ public class CarController {
 
     @Operation(summary = "车辆出发")
     @PutMapping("/setout")
-    public Car move(@RequestBody CarSetoutRequest carSetoutRequest) {
+    public Car setout(@RequestBody CarSetoutRequest carSetoutRequest) {
         return carService.setout(carSetoutRequest);
+    }
+
+    @Operation(summary = "车辆到达")
+    @PutMapping
+    public Car arrive(long carId) {
+        return carService.arrive(carId);
     }
 
 }
