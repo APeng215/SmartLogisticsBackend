@@ -13,4 +13,5 @@ public interface OrderService {
     List<OrderResponse> findAll();
     OrderResponse update(Order order);
     OrderResponse submit(OrderRequest order);
+    List<Order> findOrdersByCarId(long id);
 }

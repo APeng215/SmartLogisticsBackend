@@ -24,7 +24,7 @@ public class Order {
 
     private Date createTime;
     private Date updateTime;
-    private String state;
+    private String state; // “待入库” -> “已入库” -> “已出库” -> “已送达”
     @ManyToOne
     private Warehouse targetWarehouse;
     @ManyToOne
