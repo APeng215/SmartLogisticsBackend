@@ -11,6 +11,7 @@ import com.apeng.smartlogisticsbackend.repository.OrderRepository;
 import com.apeng.smartlogisticsbackend.repository.ShelveRepository;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.apache.tomcat.websocket.server.WsHttpUpgradeHandler;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
 
@@ -40,9 +42,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private CarRepository carRepository;
-
-    private final Logger logger = LoggerFactory.getLogger(WarehouseService.class);
-
 
     @Override
     public Long insert(Warehouse warehouse) {
@@ -174,7 +173,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             validate(outboundRequest, order, car);
             doOutbound(outboundRequest, order);
         } catch (ResponseStatusException e) {
-            logger.info(String.format("Order(%d) can not been served by the car(%d)!", order.getId(), car.getId()));
+            log.info(String.format("Order(%d) can not been served by the car(%d)!", order.getId(), car.getId()));
         }
     }
 
