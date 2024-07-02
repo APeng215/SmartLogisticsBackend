@@ -1,23 +1,21 @@
 package com.apeng.smartlogisticsbackend.entity;
 
-import com.apeng.smartlogisticsbackend.entity.sub.Authority;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
-@Table(name = "`users`")
 @JsonIncludeProperties({ "username" })
 public class User implements UserDetails {
 
@@ -25,8 +23,7 @@ public class User implements UserDetails {
     private String username;
     @Column(nullable = false)
     private String password;
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Authority> authorities = new HashSet<>();
+    private Role role;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
@@ -42,18 +39,18 @@ public class User implements UserDetails {
         validate(username, password);
         this.password = new BCryptPasswordEncoder().encode(password);
         this.username = username;
-        this.authorities.add(new Authority(username, "ROLE_USER"));
+        this.role = Role.USER;
         this.accountNonExpired = true;
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
         this.enabled = true;
     }
 
-    public User(String username, String password, Set<Authority> authorities) {
+    public User(String username, String password, Role role) {
         validate(username, password);
         this.password = new BCryptPasswordEncoder().encode(password);
         this.username = username;
-        this.authorities = authorities;
+        this.role = role;
         this.accountNonExpired = true;
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
@@ -72,7 +69,7 @@ public class User implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     /**
@@ -141,4 +138,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    public enum Role {
+        USER,
+        ADMIN
+    }
+
 }
