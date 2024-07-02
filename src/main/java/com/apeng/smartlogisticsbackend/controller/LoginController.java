@@ -11,11 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/login")
 public class LoginController {
 
-
     @GetMapping
     private String loginTest() {
         return "Logged in";
     }
-
 
 }
