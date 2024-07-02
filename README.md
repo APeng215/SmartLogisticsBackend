@@ -20,12 +20,15 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 > 
 > 具体参看 `application.properties` 中 `spring.jpa.hibernate.ddl-auto=xxx` 这一配置项。
 
-### 如何认证？
+### 如何登录/认证？
 
-进行任何 API 调用都需要在请求头中添加 **Basic Auth** 认证信息，方式如下：
+用 *form-data* 形式请求接口 `GET /login`，*form-data* 包含两组键值对:
 
-1. 根据 Basic Auth 规则生成密钥，如 `Basic YWRtaW46MTIzNDU2`
-2. 添加请求头 `Authorization: Basic YWRtaW46MTIzNDU2`
+```json
+username: admin
+password: 123456
+```
+如果后端返回 `Code 2xx` 则说明登录成功，此后可以自由访问资源 API。
 
 > [!TIP]
 > 后端内置了管理员账号，测试时可以选用此账号生成 Basic Auth :
@@ -34,8 +37,9 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 > 
 > 密码: 123456
 
-## API 文档 *(WIP)*
+## API 文档
 
+在后端运行时查看
 http://localhost:8081/swagger-ui/index.html
 
 
