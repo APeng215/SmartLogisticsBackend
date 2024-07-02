@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
 import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
@@ -25,8 +26,31 @@ public class CarServiceImpl implements CarService {
     OrderService orderService;
     
     @Override
-    public Long insert(Car car) {
-        return carRepository.save(car).getId();
+    public Car insert(CarInsertRequest carInsertRequest) {
+        Warehouse warehouse = warehouseService.findById(carInsertRequest.warehouseId());
+        validate(carInsertRequest, warehouse);
+        return carRepository.save(createCar(carInsertRequest, warehouse));
+    }
+
+    private static Car createCar(CarInsertRequest carInsertRequest, Warehouse warehouse) {
+        return new Car(carInsertRequest.transporter(), warehouse);
+    }
+
+    private static void validate(CarInsertRequest carInsertRequest, Warehouse warehouse) {
+        validateWarehouse(warehouse);
+        validateTransporter(carInsertRequest);
+    }
+
+    private static void validateTransporter(CarInsertRequest carInsertRequest) {
+        if (carInsertRequest.transporter() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transporter name is empty!");
+        }
+    }
+
+    private static void validateWarehouse(Warehouse warehouse) {
+        if (warehouse == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse is null!");
+        }
     }
 
     @Override
