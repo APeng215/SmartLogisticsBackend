@@ -34,6 +34,7 @@ import java.util.Base64;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private static final String KEY = generateRandomKey();
+    private static final boolean ENABLE_SECURITY = false;
 
     /**
      * 允许跨域请求
@@ -104,17 +105,23 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 )
                 .addFilterAfter(rememberMeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authorizeHttpRequests -> {
-                    authorizeHttpRequests
-                            .requestMatchers("/v3/**").permitAll()
-                            .requestMatchers("/register").permitAll()
-                            .requestMatchers("/error").permitAll()
-                            .requestMatchers("/**").hasRole("USER");
-                })
                 .logout(config -> config.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT)))
                 .csrf(AbstractHttpConfigurer::disable);
+        if (ENABLE_SECURITY) {
+            enableSecurity(http);
+        }
         return http.build();
     }
+
+    private static void enableSecurity(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/**").permitAll()
+                .requestMatchers("/register").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/**").hasRole("USER"));
+    }
+
 
     private static String generateRandomKey() {
         SecureRandom secureRandom = new SecureRandom();
