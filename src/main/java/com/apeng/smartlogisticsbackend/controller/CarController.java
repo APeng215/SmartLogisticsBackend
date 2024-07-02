@@ -23,7 +23,7 @@ public class CarController {
 
     @Operation(summary = "通过运输者姓名获取车辆列表")
     @GetMapping("/search/name/{name}")
-    public List<Car> getCarsByTransporter(@PathVariable String name) {
+    public Car getCarsByTransporter(@PathVariable String name) {
         return carService.findByTransporter(name);
     }
 
