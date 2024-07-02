@@ -110,7 +110,7 @@ public class CarServiceImpl implements CarService {
         validateState(car);
         doCarArrival(car);
         dischargeCargo(carId, car);
-        return car;
+        return carRepository.save(car);
     }
 
     private void dischargeCargo(long carId, Car car) {
