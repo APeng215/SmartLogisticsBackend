@@ -24,7 +24,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 用 *form-data* 形式请求接口 `GET /login`，*form-data* 包含两组键值对:
 
-```json
+```
 username: admin
 password: 123456
 ```
