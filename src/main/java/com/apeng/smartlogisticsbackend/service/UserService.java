@@ -35,9 +35,9 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(username).orElseThrow();
     }
 
-    public User register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
         validateUniqueUsername(registerRequest);
-        return userRepository.save(new User(registerRequest.username(), registerRequest.password()));
+        userRepository.save(new User(registerRequest.username(), registerRequest.password()));
     }
 
     private void validateUniqueUsername(RegisterRequest registerRequest) {
