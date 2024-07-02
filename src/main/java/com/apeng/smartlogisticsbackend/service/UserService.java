@@ -36,8 +36,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User register(RegisterRequest registerRequest) {
-        if (!userRepository.findById(registerRequest.password()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already used!");
+        if (!userRepository.findById(registerRequest.username()).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already used!");
         }
         return userRepository.save(new User(registerRequest.username(), registerRequest.password()));
     }

@@ -30,7 +30,6 @@ public class CommonConfig {
     public CommandLineRunner addAdminUser(UserRepository repository) {
         return (args) -> {
             repository.save(new User(CommonConfig.ADMIN_USERNAME, CommonConfig.ADMIN_PASSWORD));
-            repository.save(new User("player", "123456"));
         };
     }
 

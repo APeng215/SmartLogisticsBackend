@@ -39,7 +39,7 @@ public class User implements UserDetails {
         validate(username, password);
         this.password = new BCryptPasswordEncoder().encode(password);
         this.username = username;
-        this.role = Role.USER;
+        this.role = Role.ROLE_USER;
         this.accountNonExpired = true;
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
@@ -140,8 +140,8 @@ public class User implements UserDetails {
     }
 
     public enum Role {
-        USER,
-        ADMIN
+        ROLE_USER,
+        ROLE_ADMIN
     }
 
 }

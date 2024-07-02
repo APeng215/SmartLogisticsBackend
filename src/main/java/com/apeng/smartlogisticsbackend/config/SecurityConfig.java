@@ -65,6 +65,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .requestMatchers("/swagger-ui/**").permitAll()
                             .requestMatchers("/v3/**").permitAll()
                             .requestMatchers("/register").permitAll()
+                            .requestMatchers("/error").permitAll()
                             .requestMatchers("/**").hasRole("USER");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
