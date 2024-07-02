@@ -45,8 +45,8 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Car> findByTransporter(String name) {
-        return null;
+    public Car findByTransporter(String name) {
+        return carRepository.findByTransporter(name);
     }
 
     @Override

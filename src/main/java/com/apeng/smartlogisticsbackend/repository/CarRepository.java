@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
-    List<Car> findByTransporter(String transporter);
+    Car findByTransporter(String transporter);
 }

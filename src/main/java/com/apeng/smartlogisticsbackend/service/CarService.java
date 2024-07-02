@@ -10,7 +10,7 @@ public interface CarService {
     void deleteById(Long id);
     void deleteByIdList(List<Long> idList);
     Car findById(Long id);
-    List<Car> findByTransporter(String name);
+    Car findByTransporter(String name);
     Car setout(CarSetoutRequest carSetoutRequest);
     List<Car> findAll();
     Car update(Car car);

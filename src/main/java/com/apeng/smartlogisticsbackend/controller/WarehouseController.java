@@ -65,13 +65,13 @@ public class WarehouseController {
     }
 
     @Operation(summary = "入库操作")
-    @PostMapping("/inbound")
+    @PutMapping("/inbound")
     public void inbound(@RequestBody InboundRequest inboundRequest) {
         warehouseService.inbound(inboundRequest);
     }
 
     @Operation(summary = "出库操作")
-    @PostMapping("/outbound")
+    @PutMapping("/outbound")
     public void outbound(@RequestBody OutboundRequest outboundRequest) {
         warehouseService.outbound(outboundRequest);
     }
