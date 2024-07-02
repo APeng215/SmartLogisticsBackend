@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.controller;
 
+import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
 import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.service.CarService;
@@ -35,7 +36,7 @@ public class CarController {
 
     @Operation(summary = "添加新车辆")
     @PostMapping("/insert")
-    public Long insertCar(@RequestBody Car car) {
+    public Car insertCar(@RequestBody CarInsertRequest car) {
         return carService.insert(car);
     }
 

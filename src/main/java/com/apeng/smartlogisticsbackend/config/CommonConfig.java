@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.config;
 
+import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
 import com.apeng.smartlogisticsbackend.entity.*;
 import com.apeng.smartlogisticsbackend.entity.sub.Authority;
 import com.apeng.smartlogisticsbackend.repository.CarRepository;
@@ -77,9 +78,9 @@ public class CommonConfig {
             warehouseService.insert(new Warehouse("荷园驿站", "荷园6号楼", 4));
             warehouseService.insert(new Warehouse("柳园驿站", "柳园6号楼", 5));
             warehouseService.insert(new Warehouse("松园驿站", "松园5号楼", 6));
-            carService.insert(new Car("万浩", "停靠中", warehouseService.findById(1L)));
-            carService.insert(new Car("车车", "停靠中", warehouseService.findById(1L)));
-            carService.insert(new Car("神奈", "停靠中", warehouseService.findById(1L)));
+            carService.insert(new CarInsertRequest("万浩", 1L));
+            carService.insert(new CarInsertRequest("车车", 1L));
+            carService.insert(new CarInsertRequest("神奈", 1L));
         };
     }
 
