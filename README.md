@@ -22,7 +22,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 ### 如何登录/认证？
 
-用 *form-data* 形式请求接口 `GET /login`，*form-data* 包含两组键值对:
+用 *form-data* 形式请求接口 `POST /login`，*form-data* 包含两组键值对:
 
 ```
 username: admin
