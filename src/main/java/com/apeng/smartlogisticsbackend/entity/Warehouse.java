@@ -1,16 +1,10 @@
 package com.apeng.smartlogisticsbackend.entity;
 
-import com.apeng.smartlogisticsbackend.dto.LngLat;
-import com.apeng.smartlogisticsbackend.service.ShelveService;
-import com.apeng.smartlogisticsbackend.service.ShelveServiceImpl;
+import com.apeng.smartlogisticsbackend.entity.embeddable.LngLat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
