@@ -35,9 +35,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(username).orElseThrow();
     }
 
-    public void register(RegisterRequest registerRequest) {
+    /**
+     * 注册
+     * @param registerRequest 注册请求
+     * @return 用户名
+     */
+    public String register(RegisterRequest registerRequest) {
         validateUniqueUsername(registerRequest);
-        userRepository.save(new User(registerRequest.username(), registerRequest.password()));
+        return userRepository.save(new User(registerRequest.username(), registerRequest.password())).getUsername();
     }
 
     private void validateUniqueUsername(RegisterRequest registerRequest) {
