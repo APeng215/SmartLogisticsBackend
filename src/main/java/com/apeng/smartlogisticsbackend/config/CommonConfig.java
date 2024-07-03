@@ -1,6 +1,7 @@
 package com.apeng.smartlogisticsbackend.config;
 
 import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
+import com.apeng.smartlogisticsbackend.dto.LngLat;
 import com.apeng.smartlogisticsbackend.entity.*;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
 import com.apeng.smartlogisticsbackend.service.CarService;
@@ -37,9 +38,9 @@ public class CommonConfig {
     @Bean
     public CommandLineRunner addWarehouseAndCar(WarehouseService warehouseService, CarService carService) {
         return (args) -> {
-            warehouseService.insert(new Warehouse("荷园驿站", "荷园6号楼", 4));
-            warehouseService.insert(new Warehouse("柳园驿站", "柳园6号楼", 5));
-            warehouseService.insert(new Warehouse("松园驿站", "松园5号楼", 6));
+            warehouseService.insert(new Warehouse("郑州大学荷园驿站", "郑州大学荷园洗浴中心", 10, new LngLat(113.530395,34.814632)));
+            warehouseService.insert(new Warehouse("郑州大学柳园驿站", "郑州大学柳园", 8, new LngLat(113.529802,34.812241)));
+            warehouseService.insert(new Warehouse("郑州大学松园驿站", "郑州大学松园", 12, new LngLat(113.531004,34.822673)));
             carService.insert(new CarInsertRequest("万浩", 1L));
             carService.insert(new CarInsertRequest("车车", 1L));
             carService.insert(new CarInsertRequest("神奈", 1L));

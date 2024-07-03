@@ -35,11 +35,15 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(username).orElseThrow();
     }
 
-    public User register(RegisterRequest registerRequest) {
-        if (!userRepository.findById(registerRequest.username()).isEmpty()) {
+    public void register(RegisterRequest registerRequest) {
+        validateUniqueUsername(registerRequest);
+        userRepository.save(new User(registerRequest.username(), registerRequest.password()));
+    }
+
+    private void validateUniqueUsername(RegisterRequest registerRequest) {
+        userRepository.findById(registerRequest.username()).ifPresent(user -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already used!");
-        }
-        return userRepository.save(new User(registerRequest.username(), registerRequest.password()));
+        });
     }
 
 }
