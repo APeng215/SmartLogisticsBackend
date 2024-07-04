@@ -1,8 +1,8 @@
 package com.apeng.smartlogisticsbackend.config;
 
 import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
-import com.apeng.smartlogisticsbackend.dto.LngLat;
 import com.apeng.smartlogisticsbackend.entity.*;
+import com.apeng.smartlogisticsbackend.entity.embeddable.LngLat;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
 import com.apeng.smartlogisticsbackend.service.CarService;
 import com.apeng.smartlogisticsbackend.service.OrderService;
