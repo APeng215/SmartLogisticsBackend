@@ -3,6 +3,7 @@ package com.apeng.smartlogisticsbackend.service;
 import com.apeng.smartlogisticsbackend.dto.CarInsertRequest;
 import com.apeng.smartlogisticsbackend.dto.CarSetoutRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
+import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +26,9 @@ public class CarServiceImpl implements CarService {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    ShelveService shelveService;
     
     @Override
     public Car insert(CarInsertRequest carInsertRequest) {
@@ -88,8 +93,14 @@ public class CarServiceImpl implements CarService {
         }
     }
 
-    private static void doSetout(Car car, Warehouse targetWarehouse) {
+    private void doSetout(Car car, Warehouse targetWarehouse) {
         car.setTargetWarehouse(targetWarehouse);
+        List<Order> orders = new ArrayList<>();
+        shelveService.findShelvesByWarehouseId(car.getWarehouse().getId()).forEach(shelve -> {
+            orderService.findOrdersByShelveId(shelve.getId()).forEach(orderResponse -> {
+                orders.add(orderResponse.getOrder());
+            });
+        });
         car.setState("运输中");
     }
 

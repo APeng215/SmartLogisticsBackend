@@ -18,4 +18,5 @@ public interface WarehouseService {
     Warehouse update(Warehouse warehouse);
     boolean inbound(InboundRequest inboundRequest);
     List<Long> outbound(OutboundRequest outboundRequest);
+    boolean autoIObound(long carId, List<Warehouse> passWarehouses);
 }

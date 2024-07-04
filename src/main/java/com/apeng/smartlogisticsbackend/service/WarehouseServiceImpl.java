@@ -102,6 +102,11 @@ public class WarehouseServiceImpl implements WarehouseService {
             key.setState("已入库");
             key.setUpdateTime(new Date());
             shelveService.update(value);
+            Car car= key.getCar();
+            if(car!=null){
+                car.setCapacity(car.getCapacity()+key.getProductNum());
+                carRepository.save(car);
+            }
             key.setCar(null);
             orderRepository.save(key);
         });
@@ -164,6 +169,19 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<Long> path = calculateShortestPaths(orders2Outbound);
         doOutbounds(outboundRequest, orders2Outbound);
         return path;
+    }
+
+    @Override
+    public boolean autoInAndOutbound(long carId, List<Warehouse> passWarehouses) {
+        Car car = carRepository.findById(carId).orElseThrow(RuntimeException::new);
+        Warehouse currentWarehouse = car.getWarehouse();
+        Warehouse targetWarehouse = car.getTargetWarehouse();
+        passWarehouses.forEach(nextWarehouse->{
+            List<Long> orderList = new ArrayList<>();
+
+            OutboundRequest outboundRequest = new OutboundRequest(orderList,nextWarehouse.getId());
+        });
+        return true;
     }
 
     private List<Long> calculateShortestPaths(final List<Order> orders2Outbound) {
@@ -242,11 +260,15 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private void boundOrder(OutboundRequest outboundRequest, Order order) {
         order.setShelve(null);
-        order.setCar(carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!")));
+        Car car = carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the car!"));
+        car.setCapacity(car.getCapacity()-order.getProductNum());
+        carRepository.save(car);
+        order.setCar(car);
         order.setState("已出库");
         order.setUpdateTime(new Date());
         orderRepository.save(order);
     }
+
 
     private void decreaseShelveLoadFactor(Order order) {
         Shelve shelve = order.getShelve();

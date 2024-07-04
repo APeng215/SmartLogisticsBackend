@@ -19,6 +19,7 @@ public class Car {
 
     private String transporter;
     private String state; // “停靠中” <---> “运输中”
+    private int capacity=20;
     @ManyToOne
     private Warehouse warehouse;
     @ManyToOne
