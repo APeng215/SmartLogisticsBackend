@@ -49,4 +49,11 @@ public class ShelveController {
     public Shelve updateShelve(@RequestBody Shelve shelve) {
         return shelveService.update(shelve);
     }
+
+    @Operation(summary = "通过仓库ID获取其拥有的货架信息")
+    @PutMapping("/search/byWarehouse")
+    public List<Shelve> updateShelve(@RequestBody Long warehouseId) {
+        return shelveService.findShelvesByWarehouseId(warehouseId);
+    }
+
 }
