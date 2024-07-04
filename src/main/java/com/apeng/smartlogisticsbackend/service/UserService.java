@@ -5,6 +5,8 @@ import com.apeng.smartlogisticsbackend.entity.User;
 import com.apeng.smartlogisticsbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -49,6 +51,19 @@ public class UserService implements UserDetailsService {
         userRepository.findById(registerRequest.username()).ifPresent(user -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already used!");
         });
+    }
+
+    public String getUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else {
+                return principal.toString();
+            }
+        }
+        return "Anonymous";
     }
 
 }
