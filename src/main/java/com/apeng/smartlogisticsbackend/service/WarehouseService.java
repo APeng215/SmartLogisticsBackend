@@ -16,6 +16,6 @@ public interface WarehouseService {
     List<Warehouse> findByName(String name);
     List<Warehouse> findByPosition(String position);
     Warehouse update(Warehouse warehouse);
-    void inbound(InboundRequest inboundRequest);
+    boolean inbound(InboundRequest inboundRequest);
     List<Long> outbound(OutboundRequest outboundRequest);
 }

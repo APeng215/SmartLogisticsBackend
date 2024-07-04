@@ -22,6 +22,12 @@ public class OrderController {
         return orderService.findById(id);
     }
 
+    @Operation(summary = "通过货架ID获取订单信息")
+    @GetMapping("/search/shelveId/{shelveId}")
+    public List<OrderResponse> getOrdersByShelveId(@PathVariable long shelveId) {
+        return orderService.findOrdersByShelveId(shelveId);
+    }
+
     @Operation(summary = "通过订单状态获取订单信息")
     @GetMapping("/search/state/{state}")
     public List<OrderResponse> getOrderByState(@PathVariable String state) {

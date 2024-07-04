@@ -9,4 +9,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findOrdersByCarId(long id);
     List<Order> findOrdersByState(String state);
+    List<Order> findOrdersByShelveId(long shelveId);
 }
