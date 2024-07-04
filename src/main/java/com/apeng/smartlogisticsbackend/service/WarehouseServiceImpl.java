@@ -8,24 +8,17 @@ import com.apeng.smartlogisticsbackend.entity.Shelve;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
 import com.apeng.smartlogisticsbackend.repository.CarRepository;
 import com.apeng.smartlogisticsbackend.repository.OrderRepository;
-import com.apeng.smartlogisticsbackend.repository.ShelveRepository;
 import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.apache.tomcat.websocket.server.WsHttpUpgradeHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -115,6 +108,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         });
 
     }
+
     /**
      * 货架选择算法
      * @param orders 需要计算目标货架的订单
@@ -133,12 +127,13 @@ public class WarehouseServiceImpl implements WarehouseService {
 
                 startX = bestShelve.getPosX();
                 startY = bestShelve.getPosY();
-            }else {
+            } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order " + order.getId() + " cannot be placed on any shelve.");
             }
         }
         return orderShelveMap;
     }
+
     private Shelve findBestShelve(Order order, List<Shelve> shelveList, int startX, int startY) {
         Shelve bestShelve = null;
         int maxLoadDifference = Integer.MIN_VALUE;
@@ -160,33 +155,73 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         return bestShelve;
     }
+
     @Override
-    public synchronized void outbound(OutboundRequest outboundRequest) {
+    public synchronized List<Long> outbound(OutboundRequest outboundRequest) {
+        Car car = carRepository.findById(outboundRequest.carId()).orElseThrow();
+        List<Order> orders2Outbound = new LinkedList<>();
+        fillOrders2Outbound(outboundRequest, car, orders2Outbound);
+        // 必须先计算路径再进行出库动作！
+        List<Long> path = calculateShortestPaths(orders2Outbound);
+        doOutbounds(outboundRequest, orders2Outbound);
+        return path;
+    }
+
+    private List<Long> calculateShortestPaths(final List<Order> orders2Outbound) {
+        List<Long> path = new ArrayList<>();
+        int startX = 0, startY = 0;
+
+        // Create a list of shelves to visit
+        List<Shelve> shelvesToVisit = new ArrayList<>();
+        for (Order order : orders2Outbound) {
+            shelvesToVisit.add(order.getShelve());
+        }
+
+        while (!shelvesToVisit.isEmpty()) {
+            // Find the nearest shelve
+            Shelve nearestShelve = null;
+            double nearestDistance = Double.MAX_VALUE;
+            for (Shelve shelve : shelvesToVisit) {
+                double distance = calculateDistance(startX, startY, shelve.getPosX(), shelve.getPosY());
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestShelve = shelve;
+                }
+            }
+
+            // Add the nearest shelve ID to the path
+            if (nearestShelve != null) {
+                path.add(nearestShelve.getId());
+                startX = nearestShelve.getPosX();
+                startY = nearestShelve.getPosY();
+                shelvesToVisit.remove(nearestShelve);
+            }
+        }
+        return path;
+    }
+
+    private double calculateDistance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    private void doOutbounds(OutboundRequest outboundRequest, List<Order> orders2Outbound) {
+        orders2Outbound.forEach(order -> doOutbound(outboundRequest, order));
+    }
+
+    private void fillOrders2Outbound(OutboundRequest outboundRequest, Car car, List<Order> orders2Outbound) {
         orderRepository.findAllById(outboundRequest.orderIds()).forEach(order -> {
-            Car car = carRepository.findById(outboundRequest.carId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d not founded!", outboundRequest.carId())));
-            try2Outbound(outboundRequest, order, car);
+            if (validate(order, car)) {
+                orders2Outbound.add(order);
+            }
         });
     }
 
-    private void try2Outbound(OutboundRequest outboundRequest, Order order, Car car) {
-        try {
-            validate(outboundRequest, order, car);
-            doOutbound(outboundRequest, order);
-        } catch (ResponseStatusException e) {
-            log.info(String.format("Order(%d) can not been served by the car(%d)!", order.getId(), car.getId()));
-        }
+    private boolean validate(Order order, Car car) {
+        return validateInbounding(order) && validateCarPos(order, car) && validateCarState(car);
     }
 
-    private void validate(OutboundRequest outboundRequest, Order order, Car car) {
-        validateInbounding(order);
-        validateCarPos(outboundRequest, order, car);
-        validateCarState(car);
-    }
-
-    private static void validateCarState(Car car) {
-        if (!car.getState().equals("停靠中")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d is not in transit!", car.getId()));
-        }
+    private static boolean validateCarState(Car car) {
+        return car.getState().equals("停靠中");
     }
 
     private void doOutbound(OutboundRequest outboundRequest, Order order) {
@@ -194,20 +229,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         boundOrder(outboundRequest, order);
     }
 
-    private static void validateCarPos(OutboundRequest outboundRequest, Order order, Car car) {
-        if (!isCarInWarehouseOfOrder(order, car)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Car %d is not in Warehouse %d!", outboundRequest.carId(), order.getShelve().getWarehouse().getId()));
-        }
+    private static boolean validateCarPos(Order order, Car car) {
+        return isCarInWarehouseOfOrder(order, car);
     }
 
     private static boolean isCarInWarehouseOfOrder(Order order, Car car) {
         return order.getShelve().getWarehouse().equals(car.getWarehouse());
     }
 
-    private static void validateInbounding(Order order) {
-        if (order.getShelve() == null || !order.getState().equals("已入库")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Order(Id %d) has not been inbounded!", order.getId()));
-        }
+    private static boolean validateInbounding(Order order) {
+        return order.getShelve() != null && order.getState().equals("已入库");
     }
 
     private void boundOrder(OutboundRequest outboundRequest, Order order) {
@@ -223,4 +254,36 @@ public class WarehouseServiceImpl implements WarehouseService {
         shelve.setLoadFactor(shelve.getLoadFactor() - order.getProductNum());
         shelveService.update(shelve);
     }
+
+    @ToString
+    private static class PickupPaths {
+
+        Map<Order, List<Shelve>> pathMap = new HashMap<>();
+
+        private PickupPaths addPath(Order order, Shelve nextPath) {
+            pathMap.merge(order, List.of(nextPath), (paths, value) -> {
+                paths.addAll(value);
+                return paths;
+            });
+            return this;
+        }
+
+        private PickupPaths addPaths(Order order, List<Shelve> nextPaths) {
+            pathMap.merge(order, nextPaths, (paths, value) -> {
+                paths.addAll(value);
+                return paths;
+            });
+            return this;
+        }
+
+        private String getPath4IdDescription() {
+            Map<Long, List<Long>> pathMap4Id = new HashMap<>();
+            pathMap.forEach(((order, shelves) -> {
+                pathMap4Id.put(order.getId(), shelves.stream().map(Shelve::getId).collect(Collectors.toList()));
+            }));
+            return pathMap4Id.toString();
+        }
+
+    }
+
 }
