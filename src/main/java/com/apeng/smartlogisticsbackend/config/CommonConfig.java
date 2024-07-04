@@ -40,6 +40,7 @@ public class CommonConfig {
             warehouseService.insert(new Warehouse("郑州大学荷园驿站", "郑州大学荷园洗浴中心", 10, new LngLat(113.530395,34.814632)));
             warehouseService.insert(new Warehouse("郑州大学柳园驿站", "郑州大学柳园", 8, new LngLat(113.529802,34.812241)));
             warehouseService.insert(new Warehouse("郑州大学松园驿站", "郑州大学松园", 12, new LngLat(113.531004,34.822673)));
+            warehouseService.insert(new Warehouse("郑州大学菊园驿站","郑州大学菊园",6,new LngLat(113.53078,34.820693)));
             warehouseService.insert(new Warehouse("南昌仓库","南昌",6,new LngLat(115.854992,28.683702)));
             carService.insert(new CarInsertRequest("万浩", 1L));
             carService.insert(new CarInsertRequest("车车", 2L));
