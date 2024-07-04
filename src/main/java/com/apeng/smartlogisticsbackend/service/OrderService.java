@@ -16,4 +16,5 @@ public interface OrderService {
     List<OrderResponse> findByState(String state);
     void deleteByIdList(List<Long> idList);
     List<Order> findOrdersByCarId(long id);
+    List<OrderResponse> findOrdersByShelveId(long shelveId);
 }

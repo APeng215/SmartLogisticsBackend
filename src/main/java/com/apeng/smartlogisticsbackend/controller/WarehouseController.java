@@ -66,8 +66,8 @@ public class WarehouseController {
 
     @Operation(summary = "入库操作")
     @PutMapping("/inbound")
-    public void inbound(@RequestBody InboundRequest inboundRequest) {
-        warehouseService.inbound(inboundRequest);
+    public boolean inbound(@RequestBody InboundRequest inboundRequest) {
+        return warehouseService.inbound(inboundRequest);
     }
 
     @Operation(summary = "出库操作")

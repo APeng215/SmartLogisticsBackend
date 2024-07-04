@@ -82,6 +82,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrdersByCarId(id);
     }
 
+    @Override
+    public List<OrderResponse> findOrdersByShelveId(long shelveId) {
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        orderRepository.findOrdersByShelveId(shelveId).forEach(order -> {
+            orderResponses.add(new OrderResponse(order));
+        });
+        return orderResponses;
+    }
+
     private OrderResponse doSubmit(OrderRequest orderRequest) {
         Product product = productRepository.findById(orderRequest.productId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the product in database!"));
         Order order = new Order(product, orderRequest.productNum(), warehouseService.findById(orderRequest.targetWarehouseId()));

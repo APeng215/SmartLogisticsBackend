@@ -95,9 +95,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public synchronized void inbound(InboundRequest inboundRequest) {
+    public synchronized boolean inbound(InboundRequest inboundRequest) {
         List<Order> orders = orderRepository.findAllById(inboundRequest.orderIds());
-
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
             key.setState("已入库");
@@ -106,7 +105,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             key.setCar(null);
             orderRepository.save(key);
         });
-
+        return true;
     }
 
     /**
