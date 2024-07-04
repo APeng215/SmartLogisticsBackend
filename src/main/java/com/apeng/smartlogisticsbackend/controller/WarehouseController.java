@@ -72,7 +72,7 @@ public class WarehouseController {
 
     @Operation(summary = "出库操作")
     @PutMapping("/outbound")
-    public String outbound(@RequestBody OutboundRequest outboundRequest) {
+    public List<Long> outbound(@RequestBody OutboundRequest outboundRequest) {
         return warehouseService.outbound(outboundRequest);
     }
 }

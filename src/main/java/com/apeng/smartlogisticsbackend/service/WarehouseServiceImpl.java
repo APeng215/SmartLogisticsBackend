@@ -157,18 +157,18 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public synchronized String outbound(OutboundRequest outboundRequest) {
+    public synchronized List<Long> outbound(OutboundRequest outboundRequest) {
         Car car = carRepository.findById(outboundRequest.carId()).orElseThrow();
         List<Order> orders2Outbound = new LinkedList<>();
         fillOrders2Outbound(outboundRequest, car, orders2Outbound);
         // 必须先计算路径再进行出库动作！
-        String path4IdDescription = calculateShortestPaths(orders2Outbound).getPath4IdDescription();
+        List<Long> path = calculateShortestPaths(orders2Outbound);
         doOutbounds(outboundRequest, orders2Outbound);
-        return path4IdDescription;
+        return path;
     }
 
-    private PickupPaths calculateShortestPaths(final List<Order> orders2Outbound) {
-        PickupPaths pickupPaths = new PickupPaths();
+    private List<Long> calculateShortestPaths(final List<Order> orders2Outbound) {
+        List<Long> path = new ArrayList<>();
         int startX = 0, startY = 0;
 
         // Create a list of shelves to visit
@@ -189,19 +189,15 @@ public class WarehouseServiceImpl implements WarehouseService {
                 }
             }
 
-            // Update the paths
-            for (Order order : orders2Outbound) {
-                if (order.getShelve().equals(nearestShelve)) {
-                    pickupPaths.addPath(order, nearestShelve);
-                }
+            // Add the nearest shelve ID to the path
+            if (nearestShelve != null) {
+                path.add(nearestShelve.getId());
+                startX = nearestShelve.getPosX();
+                startY = nearestShelve.getPosY();
+                shelvesToVisit.remove(nearestShelve);
             }
-
-            // Move to the nearest shelve
-            startX = nearestShelve.getPosX();
-            startY = nearestShelve.getPosY();
-            shelvesToVisit.remove(nearestShelve);
         }
-        return pickupPaths;
+        return path;
     }
 
     private double calculateDistance(int x1, int y1, int x2, int y2) {
