@@ -51,7 +51,7 @@ public class ShelveController {
     }
 
     @Operation(summary = "通过仓库ID获取其拥有的货架信息")
-    @PutMapping("/search/byWarehouse")
+    @GetMapping("/search/byWarehouse")
     public List<Shelve> updateShelve(@RequestBody Long warehouseId) {
         return shelveService.findShelvesByWarehouseId(warehouseId);
     }
