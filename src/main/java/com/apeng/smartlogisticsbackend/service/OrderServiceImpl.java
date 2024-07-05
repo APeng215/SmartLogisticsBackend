@@ -6,6 +6,7 @@ import com.apeng.smartlogisticsbackend.entity.Order;
 import com.apeng.smartlogisticsbackend.entity.Product;
 import com.apeng.smartlogisticsbackend.repository.OrderRepository;
 import com.apeng.smartlogisticsbackend.repository.ProductRepository;
+import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,10 @@ public class OrderServiceImpl implements OrderService {
     ProductRepository productRepository;
 
     @Autowired
-    WarehouseService warehouseService;
+    WarehouseRepository warehouseRepository;
+
+    @Autowired
+    ShelveService shelveService;
 
     @Override
     public Long insert(Order order) {
@@ -91,9 +95,20 @@ public class OrderServiceImpl implements OrderService {
         return orderResponses;
     }
 
+    @Override
+    public List<OrderResponse> findOrdersByWarehouseId(long warehouseId) {
+        List<OrderResponse> orderResponseList = new ArrayList<>();
+        shelveService.findShelvesByWarehouseId(warehouseId).forEach(shelve -> {
+            findOrdersByShelveId(shelve.getId()).forEach(order->{
+                orderResponseList.add(order);
+            });
+        });
+        return orderResponseList;
+    }
+
     private OrderResponse doSubmit(OrderRequest orderRequest) {
         Product product = productRepository.findById(orderRequest.productId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find the product in database!"));
-        Order order = new Order(product, orderRequest.productNum(), warehouseService.findById(orderRequest.targetWarehouseId()));
+        Order order = new Order(product, orderRequest.productNum(), warehouseRepository.findById(orderRequest.targetWarehouseId()).orElseThrow(RuntimeException::new));
         return new OrderResponse(orderRepository.save(order));
     }
 

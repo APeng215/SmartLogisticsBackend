@@ -1,6 +1,8 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.AutoInAndOutboundRequest;
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
+import com.apeng.smartlogisticsbackend.dto.OrderResponse;
 import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Car;
 import com.apeng.smartlogisticsbackend.entity.Order;
@@ -12,12 +14,14 @@ import com.apeng.smartlogisticsbackend.repository.WarehouseRepository;
 import jakarta.transaction.Transactional;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,6 +36,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private CarRepository carRepository;
@@ -99,13 +106,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<Order> orders = orderRepository.findAllById(inboundRequest.orderIds());
         shelveSelect(orders, inboundRequest.warehouseId()).forEach((key, value) -> {
             key.setShelve(value);
-            key.setState("已入库");
             key.setUpdateTime(new Date());
+            key.setState("已入库");
             shelveService.update(value);
             Car car= key.getCar();
             if(car!=null){
                 car.setCapacity(car.getCapacity()+key.getProductNum());
                 carRepository.save(car);
+                if(car.getWarehouse().equals(key.getTargetWarehouse())){
+                    key.setState("已送达");
+                }
             }
             key.setCar(null);
             orderRepository.save(key);
@@ -171,17 +181,68 @@ public class WarehouseServiceImpl implements WarehouseService {
         return path;
     }
 
+    /**
+     * 途径仓库的时候，出库选择订单只选择那些目标仓库为下一站仓库的订单
+     * 在起始的仓库出发时，获取能最大容量的订单
+     */
     @Override
-    public boolean autoInAndOutbound(long carId, List<Warehouse> passWarehouses) {
+    public boolean autoInAndOutbound(AutoInAndOutboundRequest autoInAndOutboundRequest) {
+        long carId = autoInAndOutboundRequest.carId();
+        List<Warehouse> passWarehouses = autoInAndOutboundRequest.passWarehouses();
         Car car = carRepository.findById(carId).orElseThrow(RuntimeException::new);
+        car.setState("停靠中");
         Warehouse currentWarehouse = car.getWarehouse();
         Warehouse targetWarehouse = car.getTargetWarehouse();
-        passWarehouses.forEach(nextWarehouse->{
-            List<Long> orderList = new ArrayList<>();
+        if(targetWarehouse==null){
+            return false;
+        }
+        for(int k=0;k<=passWarehouses.size();++k){
+            Warehouse nextWarehouse;
+            if(k==passWarehouses.size()){
+                nextWarehouse=targetWarehouse;
+            }else{
+                nextWarehouse = passWarehouses.get(k);
+            }
 
-            OutboundRequest outboundRequest = new OutboundRequest(orderList,nextWarehouse.getId());
-        });
+            //currentWarehouse出货
+            List<Long> orderIdList =new ArrayList<>();
+            int totalProductNum=0;
+            List<Warehouse> filterWarehouseList = new ArrayList<>(passWarehouses.subList(k,passWarehouses.size()));
+            filterWarehouseList.add(targetWarehouse);
+            List<OrderResponse> orderResponseList = selectOrdersByWarehouseList(orderService.findOrdersByWarehouseId(currentWarehouse.getId()),filterWarehouseList);
+
+
+            for(int i=0;i<orderResponseList.size();++i){
+                OrderResponse orderResponse = orderResponseList.get(i);
+                orderIdList.add(orderResponse.getOrder().getId());
+                totalProductNum+=orderResponse.getOrder().getProductNum();
+            }
+            if(car.getCapacity()-totalProductNum>=0){
+                outbound(new OutboundRequest(orderIdList,carId));
+            }else{
+                outbound(new OutboundRequest(orderIdList.subList(0, car.getCapacity()),carId));
+            }
+            //nextWarehouse入货
+            orderIdList.clear();
+            List<Order> orderList = orderService.findOrdersByCarId(carId);
+            for(int j=0;j<orderList.size();++j)
+            {
+                Order order = orderList.get(j);
+                if(order.getTargetWarehouse().equals(nextWarehouse)){
+                    orderIdList.add(order.getId());
+                }
+            }
+            car.setWarehouse(nextWarehouse);
+            inbound(new InboundRequest(orderIdList,nextWarehouse.getId()));
+            currentWarehouse=nextWarehouse;
+        }
         return true;
+    }
+    //对 orderResponseList 进行过滤，以便保留其中 targetWarehouse 在 warehouses 列表中存在的 OrderResponse。
+    private List<OrderResponse> selectOrdersByWarehouseList(List<OrderResponse> orderResponseList, List<Warehouse> warehouses){
+        return orderResponseList.stream()
+                .filter(orderResponse -> warehouses.contains(orderResponse.getOrder().getTargetWarehouse()))
+                .collect(Collectors.toList());
     }
 
     private List<Long> calculateShortestPaths(final List<Order> orders2Outbound) {

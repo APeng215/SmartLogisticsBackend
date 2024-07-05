@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.controller;
 
+import com.apeng.smartlogisticsbackend.dto.AutoInAndOutboundRequest;
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
 import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Warehouse;
@@ -74,5 +75,11 @@ public class WarehouseController {
     @PutMapping("/outbound")
     public List<Long> outbound(@RequestBody OutboundRequest outboundRequest) {
         return warehouseService.outbound(outboundRequest);
+    }
+
+    @Operation(summary = "自动入出库操作")
+    @PutMapping("/autoInAndOutBound")
+    public boolean autoInAndOutbound(@RequestBody AutoInAndOutboundRequest autoInAndOutboundRequest) {
+        return warehouseService.autoInAndOutbound(autoInAndOutboundRequest);
     }
 }

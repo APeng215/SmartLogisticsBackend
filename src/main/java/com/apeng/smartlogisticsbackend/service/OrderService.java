@@ -17,4 +17,5 @@ public interface OrderService {
     void deleteByIdList(List<Long> idList);
     List<Order> findOrdersByCarId(long id);
     List<OrderResponse> findOrdersByShelveId(long shelveId);
+    List<OrderResponse> findOrdersByWarehouseId(long warehouseId);
 }
