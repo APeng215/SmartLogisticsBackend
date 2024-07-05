@@ -234,6 +234,12 @@ public class WarehouseServiceImpl implements WarehouseService {
                 }
             }
             car.setWarehouse(nextWarehouse);
+            if(orderList.isEmpty()) {
+                if(car.getWarehouse().equals(car.getTargetWarehouse())){
+                    car.setTargetWarehouse(null);
+                }
+                carRepository.save(car);
+            }
             inbound(new InboundRequest(orderIdList,nextWarehouse.getId()));
             currentWarehouse=nextWarehouse;
         }
