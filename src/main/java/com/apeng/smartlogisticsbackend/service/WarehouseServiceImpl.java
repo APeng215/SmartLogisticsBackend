@@ -112,10 +112,11 @@ public class WarehouseServiceImpl implements WarehouseService {
             Car car= key.getCar();
             if(car!=null){
                 car.setCapacity(car.getCapacity()+key.getProductNum());
-                carRepository.save(car);
                 if(car.getWarehouse().equals(key.getTargetWarehouse())){
                     key.setState("已送达");
+                    car.setTargetWarehouse(null);
                 }
+                carRepository.save(car);
             }
             key.setCar(null);
             orderRepository.save(key);
