@@ -1,5 +1,6 @@
 package com.apeng.smartlogisticsbackend.service;
 
+import com.apeng.smartlogisticsbackend.dto.AutoInAndOutboundRequest;
 import com.apeng.smartlogisticsbackend.dto.InboundRequest;
 import com.apeng.smartlogisticsbackend.dto.OutboundRequest;
 import com.apeng.smartlogisticsbackend.entity.Shelve;
@@ -18,5 +19,5 @@ public interface WarehouseService {
     Warehouse update(Warehouse warehouse);
     boolean inbound(InboundRequest inboundRequest);
     List<Long> outbound(OutboundRequest outboundRequest);
-    boolean autoInAndOutbound(long carId, List<Warehouse> passWarehouses);
+    boolean autoInAndOutbound(AutoInAndOutboundRequest autoInAndOutboundRequest);
 }
