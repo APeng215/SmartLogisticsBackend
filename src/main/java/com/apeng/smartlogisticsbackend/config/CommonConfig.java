@@ -71,7 +71,10 @@ public class CommonConfig {
             orderService.insert(new Order(productService.findById(2L),2,warehouseService.findById(3L)));
             orderService.insert(new Order(productService.findById(3L),3,warehouseService.findById(4L)));
             orderService.insert(new Order(productService.findById(4L),4,warehouseService.findById(4L)));
-            orderService.insert(new Order(productService.findById(1L),4,warehouseService.findById(4L)));
+            orderService.insert(new Order(productService.findById(1L),4,warehouseService.findById(2L)));
+            orderService.insert(new Order(productService.findById(2L),3,warehouseService.findById(3L)));
+            orderService.insert(new Order(productService.findById(3L),4,warehouseService.findById(4L)));
+            orderService.insert(new Order(productService.findById(4L),4,warehouseService.findById(4L)));
 
             //订单入库
             List<Long> list=new ArrayList<>();
