@@ -34,7 +34,7 @@ import java.util.Base64;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private static final String KEY = generateRandomKey();
-    private static final boolean ENABLE_SECURITY = false;
+    private static final boolean ENABLE_SECURITY = true;
 
     /**
      * 允许跨域请求
